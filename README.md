@@ -8,5 +8,5 @@ showcases how to use ML Kit APIs with Material Design.
 
 #### Tech stack
 - Kotlin
-- ML Kit Barcode Scanning API
-- Retrofit
+- [ML Kit Barcode Scanning API](https://firebase.google.com/docs/ml-kit/read-barcodes)
+- [Retrofit](https://github.com/square/retrofit)
