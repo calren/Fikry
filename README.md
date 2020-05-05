@@ -6,6 +6,9 @@ and then query for the book's ratings using the [Goodreads](www.goodreads.com) A
 This app is heavily based on this [existing sample](https://github.com/firebase/mlkit-material-android) that 
 showcases how to use ML Kit APIs with Material Design.
 
+<img src="fikry_demo.gif" alt="Demo" title="Demo" width="300" />
+
+
 #### Tech stack
 - Kotlin
 - [ML Kit Barcode Scanning API](https://firebase.google.com/docs/ml-kit/read-barcodes)
