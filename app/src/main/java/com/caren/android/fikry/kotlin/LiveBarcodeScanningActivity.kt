@@ -37,14 +37,14 @@ import com.caren.android.fikry.kotlin.camera.CameraSourcePreview
 import com.caren.android.fikry.kotlin.camera.GraphicOverlay
 import com.caren.android.fikry.kotlin.camera.WorkflowModel
 import com.caren.android.fikry.kotlin.camera.WorkflowModel.WorkflowState
-import com.caren.android.fikry.kotlin.network.BookResult
 import com.caren.android.fikry.kotlin.network.GoodreadEndpointInterface
+import com.caren.android.fikry.kotlin.network.GoodreadsResponse
 import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import java.io.IOException
 import java.util.*
 
@@ -213,26 +213,27 @@ class LiveBarcodeScanningActivity : AppCompatActivity(), OnClickListener {
                 val BASE_URL = "https://www.goodreads.com/book/"
                 val retrofit = Retrofit.Builder()
                         .baseUrl(BASE_URL)
-                        .addConverterFactory(GsonConverterFactory.create(gson))
+//                        .addConverterFactory(GsonConverterFactory.create(gson))
+                        .addConverterFactory(SimpleXmlConverterFactory.create())
                         .build()
+
                 val apiService: GoodreadEndpointInterface = retrofit.create(GoodreadEndpointInterface::class.java)
 
-                val call = apiService.getBookRating("qWxJU2Tbp5dKEN9d7XfiA", barcode.rawValue)
-                call.enqueue(object : Callback<BookResult> {
-                    override fun onResponse(call: Call<BookResult>, response: Response<BookResult>) {
+                val call = apiService.getBook(barcode.rawValue, "qWxJU2Tbp5dKEN9d7XfiA")
+                call.enqueue(object : Callback<GoodreadsResponse> {
+                    override fun onResponse(call: Call<GoodreadsResponse>, response: Response<GoodreadsResponse>) {
                         response.body()?.let {
-                            val bookReviews = it.books.get(0)
-                            val averageRating = bookReviews.averageRating
-                            val numberOfRatings = bookReviews.ratingsCount
+                            val averageRating = it.book.average_rating
+                            val numberOfRatings = it.book.work.ratings_count
 
                             barcodeFieldList.add(BarcodeField("Average rating", averageRating))
                             barcodeFieldList.add(BarcodeField("Number of ratings", numberOfRatings.toString()))
-                            BarcodeResultFragment.show(supportFragmentManager, barcodeFieldList)
+                            BarcodeResultFragment.show(supportFragmentManager, barcodeFieldList, it.book.title)
                         }
                     }
 
-                    override fun onFailure(call: Call<BookResult>, t: Throwable) {
-                        Log.e("Caren", "Error getting book info: " + t.stackTrace)
+                    override fun onFailure(call: Call<GoodreadsResponse>, t: Throwable) {
+                        Log.e("Caren", "Error getting book info: " + t.localizedMessage)
                     }
                 })
 

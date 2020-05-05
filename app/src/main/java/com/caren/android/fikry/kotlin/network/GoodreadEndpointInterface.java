@@ -2,12 +2,18 @@ package com.caren.android.fikry.kotlin.network;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface GoodreadEndpointInterface {
 
     @GET("review_counts.json")
-    Call<BookResult> getBookRating(@Query("key") String apiKey, @Query("isbns") String isbn);
+    Call<BookResultJson> getBookRating(@Query("isbn") String isbn, @Query("key") String apiKey);
+
+    @GET("isbn/{isbn}")
+    Call<GoodreadsResponse> getBook(@Path("isbn") String isbn, @Query("key") String apiKey);
+
+    // https://www.goodreads.com/book/isbn/0441172717?key=qWxJU2Tbp5dKEN9d7XfiA
 }
 
 //public interface MyApiEndpointInterface {

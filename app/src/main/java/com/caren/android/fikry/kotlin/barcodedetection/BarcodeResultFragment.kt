@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.MergeAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.ml.md.R
@@ -50,10 +51,23 @@ class BarcodeResultFragment : BottomSheetDialogFragment() {
                     ArrayList()
                 }
 
+        val headerTitle: String =
+                if (arguments?.containsKey(ARG_HEADER_TITLE) == true) {
+                    arguments.getString(ARG_HEADER_TITLE) ?: ""
+                } else {
+                    Log.e(TAG, "No header title passed in!")
+                    ""
+                }
+
         view.findViewById<RecyclerView>(R.id.barcode_field_recycler_view).apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(activity)
-            adapter = BarcodeFieldAdapter(barcodeFieldList)
+
+            val headerAdapter = BarcodeFieldHeaderAdapter(headerTitle)
+            val fieldAdapter = BarcodeFieldAdapter(barcodeFieldList)
+            val mergeAdapter = MergeAdapter(headerAdapter, fieldAdapter)
+
+            adapter = mergeAdapter
         }
 
         return view
@@ -72,11 +86,14 @@ class BarcodeResultFragment : BottomSheetDialogFragment() {
 
         private const val TAG = "BarcodeResultFragment"
         private const val ARG_BARCODE_FIELD_LIST = "arg_barcode_field_list"
+        private const val ARG_HEADER_TITLE = "header_title"
 
-        fun show(fragmentManager: FragmentManager, barcodeFieldArrayList: ArrayList<BarcodeField>) {
+        fun show(fragmentManager: FragmentManager, barcodeFieldArrayList: ArrayList<BarcodeField>,
+                 headerTitle: String) {
             val barcodeResultFragment = BarcodeResultFragment()
             barcodeResultFragment.arguments = Bundle().apply {
                 putParcelableArrayList(ARG_BARCODE_FIELD_LIST, barcodeFieldArrayList)
+                putString(ARG_HEADER_TITLE, headerTitle)
             }
             barcodeResultFragment.show(fragmentManager, TAG)
         }

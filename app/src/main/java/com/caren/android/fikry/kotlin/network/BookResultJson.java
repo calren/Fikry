@@ -5,17 +5,17 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class BookResult {
+public class BookResultJson {
 
     @SerializedName("books")
     @Expose
-    private List<Book> books = null;
+    private List<BookJson> books = null;
 
-    public List<Book> getBooks() {
+    public List<BookJson> getBooks() {
         return books;
     }
 
-    public void setBooks(List<Book> books) {
+    public void setBooks(List<BookJson> books) {
         this.books = books;
     }
 }
